@@ -1,0 +1,64 @@
+package com.ait.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import com.ait.dto.ProductDTO;
+import com.ait.service.ProductService;
+import com.ait.util.ProductType;
+import org.springframework.web.bind.annotation.PostMapping;
+
+
+
+@Controller
+public class ProductController {
+	@Autowired
+	private ProductService productService;
+	
+	@GetMapping(name = "/")
+	public String getRegistrationPage(Model model) {
+		model.addAttribute("product", new ProductDTO());
+		model.addAttribute("type", ProductType.values());
+		return "register";
+	}
+	
+	@PostMapping(value = "/register" ,name = "register the product")
+	public String saveProduct(@ModelAttribute("product")ProductDTO product,Model model) {
+		 productService.registerProduct(product);
+		return "redirect:/";
+	}
+	
+	@GetMapping(value =  "/list_product")
+	public String getListOfProduct(Model model) {
+		List<ProductDTO> allProduct=productService.fetchAllProduct();
+		model.addAttribute("listProduct",allProduct);
+		return"listproduct";
+	}
+	
+	@GetMapping(value = "/delete/{id}")
+	public String deleteProduct(@PathVariable("id")Long id) {
+		productService.deleteProduct(id);
+		return "redirect:/list_product";
+		
+	}
+	@GetMapping(value = "/edit/{id}")
+	public String editProduct(@PathVariable("id")Long id,Model model) {
+		ProductDTO ProductById = productService.fetchProductById(id);
+		model.addAttribute("product", ProductById);
+		model.addAttribute("type", ProductType.values());
+		
+		return "edit";
+	}
+	@PostMapping(value = "update")
+	public String updateProduct(@ModelAttribute("product")ProductDTO product,Model model) {
+		productService.updateProduct(product);
+		return "redirect:/list_product";
+	}
+
+}
