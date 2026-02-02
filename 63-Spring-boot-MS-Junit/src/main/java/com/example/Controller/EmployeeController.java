@@ -46,7 +46,7 @@ public class EmployeeController {
 	}
 	@DeleteMapping("/{id}")
 	public void deleteEmp(@PathVariable Long id) throws EmployeeNotFoundException {
-		employeeService.deleteEmployee(id);
+		employeeService.deleteEmployee(id); 
 	}
 	
 	
